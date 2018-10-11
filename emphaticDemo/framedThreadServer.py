@@ -23,6 +23,7 @@ lsock.bind(bindAddr)
 lsock.listen(5)
 print("listening on:", bindAddr)
 
+# serverthread extends thread
 class ServerThread(Thread):
     requestCount = 0            # one instance / class
     def __init__(self, sock, debug):
@@ -36,6 +37,7 @@ class ServerThread(Thread):
                 if self.debug: print(self.fsock, "server thread done")
                 return
             requestNum = ServerThread.requestCount
+            # intentionally creating race condition?
             time.sleep(0.001)
             ServerThread.requestCount = requestNum + 1
             msg = ("%s! (%d)" % (msg, requestNum)).encode()
