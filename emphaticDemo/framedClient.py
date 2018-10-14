@@ -1,9 +1,13 @@
 #! /usr/bin/env python3
 
 # Echo client program
-import socket, sys, re
-import params
-from framedSock import FramedStreamSock
+import re
+import socket
+import sys
+
+from lib import framedSock as fsock
+# import params
+from lib import params
 
 switchesVarDefaults = (
     (('-s', '--server'), 'server', "127.0.0.1:50001"),
@@ -52,7 +56,7 @@ if s is None:
     print('could not open socket')
     sys.exit(1)
 
-fs = FramedStreamSock(s, debug=debug)
+fs = fsock.FramedStreamSock(s, debug=debug)
 
 
 print("sending hello world")

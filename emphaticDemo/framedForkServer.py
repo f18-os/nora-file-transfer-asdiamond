@@ -1,5 +1,10 @@
 #! /usr/bin/env python3
-import sys, os, socket, params
+import os
+import socket
+import sys
+
+from lib import params
+from lib import framedSock as fsock
 
 switchesVarDefaults = (
     (('-l', '--listenPort') ,'listenPort', 50001),
@@ -22,9 +27,8 @@ lsock.listen(5)
 print("listening on:", bindAddr)
 
 while True:
-    from framedSock import FramedStreamSock
     sock, addr = lsock.accept()
-    fsock = FramedStreamSock(sock, debug)
+    fsock = fsock.FramedStreamSock(sock, debug)
 
     if not os.fork():
         print("new child process handling connection from", addr)

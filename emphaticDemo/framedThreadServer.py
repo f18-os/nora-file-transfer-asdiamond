@@ -1,13 +1,15 @@
 #! /usr/bin/env python3
-import sys, os, socket, params, time
+import sys, os, socket, time
+from lib import params
 from threading import Thread
-from framedSock import FramedStreamSock
+# from framedSock import FramedStreamSock
+from lib import framedSock as fsock
 
 switchesVarDefaults = (
-    (('-l', '--listenPort') ,'listenPort', 50001),
-    (('-d', '--debug'), "debug", False), # boolean (set if present)
-    (('-?', '--usage'), "usage", False), # boolean (set if present)
-    )
+    (('-l', '--listenPort'), 'listenPort', 50001),
+    (('-d', '--debug'), "debug", False),  # boolean (set if present)
+    (('-?', '--usage'), "usage", False),  # boolean (set if present)
+)
 
 progname = "echoserver"
 paramMap = params.parseParams(switchesVarDefaults)
@@ -17,19 +19,22 @@ debug, listenPort = paramMap['debug'], paramMap['listenPort']
 if paramMap['usage']:
     params.usage()
 
-lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # listener socket
+lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # listener socket
 bindAddr = ("127.0.0.1", listenPort)
 lsock.bind(bindAddr)
 lsock.listen(5)
 print("listening on:", bindAddr)
 
+
 # serverthread extends thread
 class ServerThread(Thread):
-    requestCount = 0            # one instance / class
+    requestCount = 0  # one instance / class
+
     def __init__(self, sock, debug):
         Thread.__init__(self, daemon=True)
-        self.fsock, self.debug = FramedStreamSock(sock, debug), debug
+        self.fsock, self.debug = fsock.FramedStreamSock(sock, debug), debug
         self.start()
+
     def run(self):
         while True:
             msg = self.fsock.receivemsg()
