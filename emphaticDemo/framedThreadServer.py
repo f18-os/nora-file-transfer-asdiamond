@@ -11,21 +11,6 @@ switchesVarDefaults = (
     (('-?', '--usage'), "usage", False),  # boolean (set if present)
 )
 
-progname = "echoserver"
-paramMap = params.parseParams(switchesVarDefaults)
-
-debug, listenPort = paramMap['debug'], paramMap['listenPort']
-
-if paramMap['usage']:
-    params.usage()
-
-lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # listener socket
-bindAddr = ("127.0.0.1", listenPort)
-lsock.bind(bindAddr)
-lsock.listen(5)
-print("listening on:", bindAddr)
-
-
 # serverthread extends thread
 class ServerThread(Thread):
     requestCount = 0  # one instance / class
@@ -49,6 +34,22 @@ class ServerThread(Thread):
             self.fsock.sendmsg(msg)
 
 
-while True:
-    sock, addr = lsock.accept()
-    ServerThread(sock, debug)
+def main():
+    progname = "echoserver"
+    paramMap = params.parseParams(switchesVarDefaults)
+    debug, listenPort = paramMap['debug'], paramMap['listenPort']
+    if paramMap['usage']:
+        params.usage()
+    lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # listener socket
+    bindAddr = ("127.0.0.1", listenPort)
+    lsock.bind(bindAddr)
+    lsock.listen(5)
+    print("listening on:", bindAddr)
+    while True:
+        sock, addr = lsock.accept()
+        ServerThread(sock, debug)
+
+
+if __name__ == '__main__':
+    main()
+

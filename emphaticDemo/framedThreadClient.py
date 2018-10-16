@@ -14,21 +14,6 @@ switchesVarDefaults = (
     (('-?', '--usage'), "usage", False),  # boolean (set if present)
 )
 
-progname = "framedClient"
-paramMap = params.parseParams(switchesVarDefaults)
-
-server, usage, debug = paramMap["server"], paramMap["usage"], paramMap["debug"]
-
-if usage:
-    params.usage()
-
-try:
-    serverHost, serverPort = re.split(":", server)
-    serverPort = int(serverPort)
-except:
-    print("Can't parse server:port from '%s'" % server)
-    sys.exit(1)
-
 
 class ClientThread(Thread):
     def __init__(self, serverHost, serverPort, debug):
@@ -71,5 +56,23 @@ class ClientThread(Thread):
         print("received:", fs.receivemsg())
 
 
-for i in range(100):
-    ClientThread(serverHost, serverPort, debug)
+def main():
+    global debug, serverHost, serverPort
+    progname = "framedClient"
+    paramMap = params.parseParams(switchesVarDefaults)
+    server, usage, debug = paramMap["server"], paramMap["usage"], paramMap["debug"]
+    if usage:
+        params.usage()
+    try:
+        serverHost, serverPort = re.split(":", server)
+        serverPort = int(serverPort)
+    except:
+        print("Can't parse server:port from '%s'" % server)
+        sys.exit(1)
+    for i in range(100):
+        ClientThread(serverHost, serverPort, debug)
+
+
+if __name__ == '__main__':
+    main()
+
